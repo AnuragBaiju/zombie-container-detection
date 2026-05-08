@@ -1,0 +1,116 @@
+# Public Streamlit dashboard. Same ConfigMap-mounted pattern as the detector
+# so we don't need to push a custom image to ECR. PROMETHEUS_URL points at the
+# in-cluster Prometheus, so it always serves real-time data.
+#
+# Public access is via a Classic ELB (Service type=LoadBalancer with default
+# annotations) — covered by AWS free tier (750 hrs + 15 GB / month).
+#
+# Apply order:
+#   kubectl create configmap dashboard-source -n zombie-detector \
+#     --from-file=app.py=dashboard/app.py \
+#     --from-file=evaluation_results.json=evaluation_results.json \
+#     --dry-run=client -o yaml | kubectl apply -f -
+#   kubectl apply -f kubernetes/dashboard/deployment-configmap.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zombie-dashboard
+  namespace: zombie-detector
+  labels:
+    app: zombie-dashboard
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: zombie-dashboard
+  template:
+    metadata:
+      labels:
+        app: zombie-dashboard
+    spec:
+      containers:
+        - name: streamlit
+          image: python:3.11-slim
+          workingDir: /app
+          env:
+            - name: PROMETHEUS_URL
+              value: "http://prometheus-server.monitoring.svc.cluster.local:9090"
+            - name: REFRESH_SECONDS
+              value: "30"
+            - name: PIP_DISABLE_PIP_VERSION_CHECK
+              value: "1"
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -eu
+              echo "[bootstrap] staging source"
+              mkdir -p /app/dashboard
+              cp -L /source/app.py /app/dashboard/app.py
+              cp -L /source/evaluation_results.json /app/evaluation_results.json
+              echo "[bootstrap] installing deps"
+              pip install --no-cache-dir --quiet \
+                streamlit==1.57.0 plotly==5.24.1 pandas==2.2.3 \
+                requests==2.32.3 numpy==2.1.3
+              echo "[bootstrap] launching streamlit on :8501"
+              exec streamlit run dashboard/app.py \
+                --server.headless=true \
+                --server.port=8501 \
+                --server.address=0.0.0.0 \
+                --browser.gatherUsageStats=false
+          ports:
+            - containerPort: 8501
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 4
+          volumeMounts:
+            - name: source
+              mountPath: /source
+              readOnly: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+      volumes:
+        - name: source
+          configMap:
+            name: dashboard-source
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zombie-dashboard
+  namespace: zombie-detector
+  labels:
+    app: zombie-dashboard
+  annotations:
+    # Classic ELB by default (free-tier eligible). To switch to NLB later add:
+    #   service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "120"
+spec:
+  type: LoadBalancer
+  selector:
+    app: zombie-dashboard
+  ports:
+    - port: 80
+      targetPort: 8501
+      protocol: TCP
+      name: http

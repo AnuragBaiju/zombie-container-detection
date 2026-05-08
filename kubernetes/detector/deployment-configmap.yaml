@@ -1,0 +1,86 @@
+# Free-tier-friendly detector deployment.
+# Avoids the need for a custom image / ECR push by mounting the Python source
+# from a ConfigMap (created at apply time with `kubectl create configmap
+# detector-source --from-file=src/`) into a stock python:3.11-slim image.
+# pip-installs dependencies at pod startup (~30s extra cold-start).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zombie-detector
+  namespace: zombie-detector
+  labels:
+    app: zombie-detector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zombie-detector
+  template:
+    metadata:
+      labels:
+        app: zombie-detector
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: zombie-detector
+      containers:
+        - name: zombie-detector
+          image: python:3.11-slim
+          workingDir: /app
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -eu
+              echo "[bootstrap] copying source from ConfigMap"
+              mkdir -p /app/src
+              cp -L /source/*.py /app/src/
+              touch /app/src/__init__.py
+              echo "[bootstrap] installing dependencies"
+              pip install --no-cache-dir --quiet \
+                requests==2.31.0 numpy==1.26.4 pandas==2.2.0 \
+                prometheus_client==0.20.0 scikit-learn==1.4.0
+              echo "[bootstrap] launching detector"
+              exec python -m src.main \
+                --prometheus-url=http://prometheus-server.monitoring.svc.cluster.local:9090 \
+                --duration=60 \
+                --threshold=70 \
+                --exclude-namespaces=kube-system,kube-public,kube-node-lease,monitoring,zombie-detector,build \
+                --continuous \
+                --interval=300 \
+                --details \
+                --metrics-port=8080
+          ports:
+            - containerPort: 8080
+              name: metrics
+          volumeMounts:
+            - name: source
+              mountPath: /source
+              readOnly: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 200Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: source
+          configMap:
+            name: detector-source
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zombie-detector
+  namespace: zombie-detector
+  labels:
+    app: zombie-detector
+spec:
+  selector:
+    app: zombie-detector
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: metrics

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zombie-detector
+  namespace: zombie-detector
+  labels:
+    app: zombie-detector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zombie-detector
+  template:
+    metadata:
+      labels:
+        app: zombie-detector
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: zombie-detector
+      containers:
+        - name: zombie-detector
+          image: 670694287735.dkr.ecr.us-east-1.amazonaws.com/zombie-detector:latest
+          imagePullPolicy: Always
+          args:
+            - "--prometheus-url=http://prometheus-server.monitoring.svc.cluster.local:9090"
+            - "--duration=60"
+            - "--threshold=70"
+            - "--exclude-namespaces=kube-system,kube-public,kube-node-lease,monitoring,zombie-detector"
+            - "--continuous"
+            - "--interval=300"
+            - "--details"
+            - "--metrics-port=8080"
+          ports:
+            - containerPort: 8080
+              name: metrics
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zombie-detector
+  namespace: zombie-detector
+  labels:
+    app: zombie-detector
+spec:
+  selector:
+    app: zombie-detector
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: metrics

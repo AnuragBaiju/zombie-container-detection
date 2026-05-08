@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adversarial-low-traffic-api
+  namespace: test-scenarios
+  labels:
+    app: adversarial-low-traffic-api
+    scenario: adversarial
+    expected: normal
+    failure-mode: "potential-false-positive"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adversarial-low-traffic-api
+  template:
+    metadata:
+      labels:
+        app: adversarial-low-traffic-api
+        scenario: adversarial
+    spec:
+      containers:
+        - name: adversarial-low-traffic-api
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # ADVERSARIAL: a real low-traffic internal microservice that
+              # genuinely receives one request every ~5 minutes. CPU is near
+              # zero, network has tiny but persistent legitimate traffic.
+              # This is the same shape as zombie-network-timeout, so Rule 4
+              # may fire even though the container is doing real work.
+              while true; do
+                # Real outbound work (genuine, infrequent)
+                wget -q -T 5 -O /dev/null http://example.com 2>/dev/null || true
+                sleep 300
+              done
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

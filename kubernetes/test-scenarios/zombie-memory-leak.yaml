@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zombie-memory-leak
+  namespace: test-scenarios
+  labels:
+    app: zombie-memory-leak
+    scenario: zombie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zombie-memory-leak
+  template:
+    metadata:
+      labels:
+        app: zombie-memory-leak
+        scenario: zombie
+    spec:
+      containers:
+        - name: zombie-memory-leak
+          image: python:3.11-slim
+          command: ["python3", "-c"]
+          args:
+            - |
+              import time
+              # Zombie pattern: gradually leaking memory with no useful CPU work
+              # Simulates a container with an unclosed connection or data structure leak
+              leaked = []
+              while True:
+                  # Leak ~2MB every 60 seconds
+                  leaked.append(bytearray(2 * 1024 * 1024))
+                  time.sleep(60)
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 1Gi

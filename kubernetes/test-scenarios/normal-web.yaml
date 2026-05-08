@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: normal-web
+  namespace: test-scenarios
+  labels:
+    app: normal-web
+    scenario: normal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: normal-web
+  template:
+    metadata:
+      labels:
+        app: normal-web
+        scenario: normal
+    spec:
+      containers:
+        - name: normal-web
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Normal pattern: active web server with continuous CPU + network
+              while true; do
+                # CPU work: simulate request processing
+                yes > /dev/null &
+                YES_PID=$!
+                sleep 2
+                kill $YES_PID 2>/dev/null
+                wait $YES_PID 2>/dev/null
+                # Network activity: serve external request
+                wget -q -O /dev/null http://example.com 2>/dev/null || true
+                sleep 3
+              done
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

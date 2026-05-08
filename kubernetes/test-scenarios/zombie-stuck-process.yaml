@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zombie-stuck-process
+  namespace: test-scenarios
+  labels:
+    app: zombie-stuck-process
+    scenario: zombie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zombie-stuck-process
+  template:
+    metadata:
+      labels:
+        app: zombie-stuck-process
+        scenario: zombie
+    spec:
+      containers:
+        - name: zombie-stuck-process
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Zombie pattern: stuck in retry loop
+              # Brief CPU spike then long idle, repeating
+              # Simulates a process retrying a failed operation
+              while true; do
+                # CPU spike: burn CPU for 30 seconds using yes
+                yes > /dev/null &
+                YES_PID=$!
+                sleep 30
+                kill $YES_PID 2>/dev/null
+                wait $YES_PID 2>/dev/null
+                # Long idle period (15 minutes) — stuck retry pattern
+                sleep 900
+              done
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

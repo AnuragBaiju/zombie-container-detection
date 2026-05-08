@@ -1,0 +1,8 @@
+﻿Container,Expected,Heuristic Score,Heuristic Result,Heuristic Correct,Naive Threshold,Naive Correct
+normal-web,normal,0.0,NORMAL,YES,NORMAL,YES
+normal-batch,normal,27.0,NORMAL,YES,ZOMBIE,NO
+zombie-low-cpu,zombie,65.0,ZOMBIE,YES,ZOMBIE,YES
+zombie-memory-leak,zombie,90.0,ZOMBIE,YES,ZOMBIE,YES
+zombie-stuck-process,zombie,66.0,ZOMBIE,YES,NORMAL,NO
+zombie-network-timeout,zombie,79.6,ZOMBIE,YES,ZOMBIE,YES
+zombie-resource-imbalance,zombie,75.0,ZOMBIE,YES,ZOMBIE,YES

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zombie-network-timeout
+  namespace: test-scenarios
+  labels:
+    app: zombie-network-timeout
+    scenario: zombie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zombie-network-timeout
+  template:
+    metadata:
+      labels:
+        app: zombie-network-timeout
+        scenario: zombie
+    spec:
+      containers:
+        - name: zombie-network-timeout
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Zombie pattern: periodic connection attempts to dead service
+              # Simulates a container retrying connections to a decommissioned endpoint
+              while true; do
+                # Try to connect to non-existent service (will fail/timeout)
+                wget -q -T 5 -O /dev/null http://dead-service.default.svc.cluster.local:8080 2>/dev/null || true
+                # Wait exactly 3 minutes between retries (regular interval)
+                sleep 180
+              done
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi

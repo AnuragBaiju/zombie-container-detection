@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: normal-batch
+  namespace: test-scenarios
+  labels:
+    app: normal-batch
+    scenario: normal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: normal-batch
+  template:
+    metadata:
+      labels:
+        app: normal-batch
+        scenario: normal
+    spec:
+      containers:
+        - name: normal-batch
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Normal pattern: periodic batch processing with heavy CPU usage
+              while true; do
+                echo "Starting batch processing..."
+                yes > /dev/null &
+                YES_PID=$!
+                sleep 60
+                kill $YES_PID 2>/dev/null
+                wait $YES_PID 2>/dev/null
+                echo "Batch complete, sleeping..."
+                sleep 540
+              done
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

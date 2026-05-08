@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adversarial-cron-hourly
+  namespace: test-scenarios
+  labels:
+    app: adversarial-cron-hourly
+    scenario: adversarial
+    expected: normal
+    failure-mode: "false-positive"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adversarial-cron-hourly
+  template:
+    metadata:
+      labels:
+        app: adversarial-cron-hourly
+        scenario: adversarial
+    spec:
+      containers:
+        - name: adversarial-cron-hourly
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # ADVERSARIAL: legitimate cron-style workload with a cycle LONGER
+              # than the detector's 60-minute analysis window.
+              # 90 sec CPU burst, then 120 minutes idle, repeat.
+              # Cycle period = 121.5 min. With a 60-min lookback window, the
+              # burst is OUTSIDE the window for ~50% of cycles, so the
+              # heuristic sees a flat-line near-zero CPU profile matching
+              # Rule 1 -> FALSE POSITIVE about half the time.
+              # (A 70-min idle was the previous design but the burst usually
+              # fell inside the 60-min window, giving Rule 1 the spike-evidence
+              # it needed to correctly exclude the pod.)
+              while true; do
+                yes > /dev/null &
+                YES_PID=$!
+                sleep 90
+                kill $YES_PID 2>/dev/null
+                wait $YES_PID 2>/dev/null
+                sleep 7200
+              done
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

@@ -1,0 +1,8 @@
+﻿#,Container,Type,Rule,Archetype,Behaviour,Literature
+1,zombie-low-cpu,ZOMBIE,Rule 1 — Sustained Low CPU (35%),Orphaned monitoring sidecar after parent pod deleted,sleep infinity + 50MB held via dd,"Zhao et al. (2023), Dang & Sharma (2024)"
+2,zombie-memory-leak,ZOMBIE,Rule 2 — Memory Leak (25%),Microservice with unclosed DB connection leaking buffers,+2MB/min for 60 min = 120% growth,Zhao et al. (2023)
+3,zombie-stuck-process,ZOMBIE,Rule 3 — Stuck Process (15%),Payment client retrying decommissioned legacy API,"30s CPU spike, 15-min idle, repeated x3+",Dang & Sharma (2024)
+4,zombie-network-timeout,ZOMBIE,Rule 4 — Network Timeout (15%),gRPC client reconnecting to removed internal service,"48 B/s DNS retries every 180s, CPU near zero",Dang & Sharma (2024)
+5,zombie-resource-imbalance,ZOMBIE,Rule 5 — Resource Imbalance (10%),"Load-test pod allocated 512Mi/1vCPU, never scaled down","sleep infinity; request=512Mi, usage<2%","Zhao et al. (2023), Liu et al. (2022)"
+6,normal-web,NORMAL,False-positive guard — all rules,Active nginx web server handling requests,"2s CPU work, 3s sleep, wget every 5s (continuous)",Liu et al. (2022) baseline
+7,normal-batch,NORMAL,False-positive guard — Rule 1 critical,Cron-style batch processor (legitimate idle),"60s CPU burst (yes>/dev/null), 540s sleep, repeat",Liu et al. (2022) baseline

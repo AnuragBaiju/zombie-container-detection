@@ -1,0 +1,389 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-zombie
+  namespace: monitoring
+data:
+  zombie-detector.json: |
+    {
+      "annotations": { "list": [] },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "title": "Detection Summary",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+          "targets": [
+            {
+              "expr": "zombie_detection_total_containers",
+              "legendFormat": "Total Containers",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "color": "blue", "value": null }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "colorMode": "background",
+            "graphMode": "none"
+          }
+        },
+        {
+          "title": "Zombies Detected",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+          "targets": [
+            {
+              "expr": "zombie_detection_zombies_count",
+              "legendFormat": "Zombies",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "red", "value": 1 }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "colorMode": "background",
+            "graphMode": "none"
+          }
+        },
+        {
+          "title": "Potential Zombies",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+          "targets": [
+            {
+              "expr": "zombie_detection_potential_count",
+              "legendFormat": "Potential",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "orange", "value": 1 }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "colorMode": "background",
+            "graphMode": "none"
+          }
+        },
+        {
+          "title": "Normal Containers",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+          "targets": [
+            {
+              "expr": "zombie_detection_normal_count",
+              "legendFormat": "Normal",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "colorMode": "background",
+            "graphMode": "none"
+          }
+        },
+        {
+          "title": "Zombie Scores Over Time",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+          "targets": [
+            {
+              "expr": "zombie_container_score",
+              "legendFormat": "{{namespace}}/{{pod}}/{{container}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisLabel": "Zombie Score",
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "lineWidth": 2,
+                "pointSize": 5,
+                "showPoints": "auto",
+                "thresholdsStyle": { "mode": "dashed" }
+              },
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "orange", "value": 30 },
+                  { "color": "red", "value": 60 }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "placement": "right" }
+          }
+        },
+        {
+          "title": "Rule 1: Sustained Low CPU (35%)",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 12, "x": 0, "y": 12 },
+          "targets": [
+            {
+              "expr": "zombie_container_rule_score{rule=\"rule1_low_cpu\"}",
+              "legendFormat": "{{namespace}}/{{container}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "min": 0, "max": 1,
+              "custom": { "drawStyle": "line", "fillOpacity": 20, "lineWidth": 2 },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "title": "Rule 2: Memory Leak (25%)",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 12, "x": 12, "y": 12 },
+          "targets": [
+            {
+              "expr": "zombie_container_rule_score{rule=\"rule2_memory_leak\"}",
+              "legendFormat": "{{namespace}}/{{container}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "min": 0, "max": 1,
+              "custom": { "drawStyle": "line", "fillOpacity": 20, "lineWidth": 2 },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "title": "Rule 3: Stuck Process (15%)",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 8, "x": 0, "y": 18 },
+          "targets": [
+            {
+              "expr": "zombie_container_rule_score{rule=\"rule3_stuck_process\"}",
+              "legendFormat": "{{namespace}}/{{container}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "min": 0, "max": 1,
+              "custom": { "drawStyle": "line", "fillOpacity": 20, "lineWidth": 2 },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "title": "Rule 4: Network Timeout (15%)",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 8, "x": 8, "y": 18 },
+          "targets": [
+            {
+              "expr": "zombie_container_rule_score{rule=\"rule4_network_timeout\"}",
+              "legendFormat": "{{namespace}}/{{container}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "min": 0, "max": 1,
+              "custom": { "drawStyle": "line", "fillOpacity": 20, "lineWidth": 2 },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "title": "Rule 5: Resource Imbalance (10%)",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 8, "x": 16, "y": 18 },
+          "targets": [
+            {
+              "expr": "zombie_container_rule_score{rule=\"rule5_resource_imbalance\"}",
+              "legendFormat": "{{namespace}}/{{container}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "min": 0, "max": 1,
+              "custom": { "drawStyle": "line", "fillOpacity": 20, "lineWidth": 2 },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "title": "Container CPU Usage (Raw)",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 12, "x": 0, "y": 24 },
+          "targets": [
+            {
+              "expr": "rate(container_cpu_usage_seconds_total{namespace=\"test-scenarios\", container!=\"POD\", container!=\"\"}[5m]) * 100",
+              "legendFormat": "{{container}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1 },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "title": "Container Memory Usage (Raw)",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 12, "x": 12, "y": 24 },
+          "targets": [
+            {
+              "expr": "container_memory_usage_bytes{namespace=\"test-scenarios\", container!=\"POD\", container!=\"\"}",
+              "legendFormat": "{{container}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1 },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "title": "Classification Distribution",
+          "type": "piechart",
+          "gridPos": { "h": 6, "w": 8, "x": 0, "y": 30 },
+          "targets": [
+            {
+              "expr": "zombie_detection_zombies_count",
+              "legendFormat": "Zombie",
+              "refId": "A"
+            },
+            {
+              "expr": "zombie_detection_potential_count",
+              "legendFormat": "Potential Zombie",
+              "refId": "B"
+            },
+            {
+              "expr": "zombie_detection_normal_count",
+              "legendFormat": "Normal",
+              "refId": "C"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Zombie" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" }}]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Potential Zombie" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" }}]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Normal" },
+                "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" }}]
+              }
+            ]
+          },
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "legend": { "displayMode": "list", "placement": "right" },
+            "pieType": "donut"
+          }
+        },
+        {
+          "title": "Container Network Activity (Raw)",
+          "type": "timeseries",
+          "gridPos": { "h": 6, "w": 16, "x": 8, "y": 30 },
+          "targets": [
+            {
+              "expr": "rate(container_network_transmit_bytes_total{namespace=\"test-scenarios\"}[5m])",
+              "legendFormat": "TX {{pod}}",
+              "refId": "A"
+            },
+            {
+              "expr": "rate(container_network_receive_bytes_total{namespace=\"test-scenarios\"}[5m])",
+              "legendFormat": "RX {{pod}}",
+              "refId": "B"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1 },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": []
+          }
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["zombie", "kubernetes", "detection"],
+      "templating": { "list": [] },
+      "time": { "from": "now-1h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Zombie Container Detection Dashboard",
+      "uid": "zombie-detector-main",
+      "version": 1
+    }

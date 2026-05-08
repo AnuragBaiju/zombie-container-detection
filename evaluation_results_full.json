@@ -1,0 +1,336 @@
+{
+  "heuristic_evaluation": {
+    "metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "false_positive_rate": 0.0
+    },
+    "confusion_matrix": {
+      "true_positives": 5,
+      "true_negatives": 2,
+      "false_positives": 0,
+      "false_negatives": 0
+    },
+    "per_container": [
+      {
+        "container": "zombie-memory-leak",
+        "expected": "zombie",
+        "predicted": "zombie",
+        "score": 89.99,
+        "correct": true,
+        "rules": {
+          "rule1_low_cpu": 0.9998,
+          "rule2_memory_leak": 1.0,
+          "rule3_stuck_process": 0.0,
+          "rule4_network_timeout": 0.0,
+          "rule5_resource_imbalance": 0.0
+        }
+      },
+      {
+        "container": "zombie-network-timeout",
+        "expected": "zombie",
+        "predicted": "zombie",
+        "score": 79.58,
+        "correct": true,
+        "rules": {
+          "rule1_low_cpu": 0.9999,
+          "rule2_memory_leak": 0.0,
+          "rule3_stuck_process": 0.0,
+          "rule4_network_timeout": 0.9725,
+          "rule5_resource_imbalance": 0.0
+        }
+      },
+      {
+        "container": "zombie-resource-imbalance",
+        "expected": "zombie",
+        "predicted": "zombie",
+        "score": 74.98,
+        "correct": true,
+        "rules": {
+          "rule1_low_cpu": 1.0,
+          "rule2_memory_leak": 0.0,
+          "rule3_stuck_process": 0.0,
+          "rule4_network_timeout": 0.0,
+          "rule5_resource_imbalance": 0.9981
+        }
+      },
+      {
+        "container": "zombie-low-cpu",
+        "expected": "zombie",
+        "predicted": "zombie",
+        "score": 65.0,
+        "correct": true,
+        "rules": {
+          "rule1_low_cpu": 1.0,
+          "rule2_memory_leak": 0.0,
+          "rule3_stuck_process": 0.0,
+          "rule4_network_timeout": 0.0,
+          "rule5_resource_imbalance": 0.0
+        }
+      },
+      {
+        "container": "zombie-stuck-process",
+        "expected": "zombie",
+        "predicted": "potential_zombie",
+        "score": 59.71,
+        "correct": true,
+        "rules": {
+          "rule1_low_cpu": 0.7524,
+          "rule2_memory_leak": 0.0,
+          "rule3_stuck_process": 0.72,
+          "rule4_network_timeout": 0.0,
+          "rule5_resource_imbalance": 0.0
+        }
+      },
+      {
+        "container": "normal-batch",
+        "expected": "normal",
+        "predicted": "normal",
+        "score": 26.81,
+        "correct": true,
+        "rules": {
+          "rule1_low_cpu": 0.4125,
+          "rule2_memory_leak": 0.0,
+          "rule3_stuck_process": 0.0,
+          "rule4_network_timeout": 0.0,
+          "rule5_resource_imbalance": 0.0
+        }
+      },
+      {
+        "container": "normal-web",
+        "expected": "normal",
+        "predicted": "normal",
+        "score": 0.0,
+        "correct": true,
+        "rules": {
+          "rule1_low_cpu": 0.0,
+          "rule2_memory_leak": 0.0,
+          "rule3_stuck_process": 0.0,
+          "rule4_network_timeout": 0.0,
+          "rule5_resource_imbalance": 0.0
+        }
+      }
+    ],
+    "total_containers": 7
+  },
+  "ml_comparison": {
+    "comparison": [
+      {
+        "container": "zombie-network-timeout",
+        "expected": "zombie",
+        "heuristic_score": 79.58,
+        "heuristic_classification": "zombie",
+        "heuristic_correct": true,
+        "if_anomaly_score": 0.0525,
+        "if_prediction": "normal",
+        "if_correct": false,
+        "why_if_misses": "Near-zero CPU (0.0%) with low variability is statistically NORMAL -- 17 of 50 simulated cluster containers (legitimately idle + cold standby) share this profile. IF cannot isolate this container quickly -> low anomaly score -> MISSED."
+      },
+      {
+        "container": "zombie-low-cpu",
+        "expected": "zombie",
+        "heuristic_score": 65.0,
+        "heuristic_classification": "zombie",
+        "heuristic_correct": true,
+        "if_anomaly_score": 0.0129,
+        "if_prediction": "normal",
+        "if_correct": false,
+        "why_if_misses": "Near-zero CPU (0.0%) with low variability is statistically NORMAL -- 17 of 50 simulated cluster containers (legitimately idle + cold standby) share this profile. IF cannot isolate this container quickly -> low anomaly score -> MISSED."
+      },
+      {
+        "container": "zombie-resource-imbalance",
+        "expected": "zombie",
+        "heuristic_score": 74.98,
+        "heuristic_classification": "zombie",
+        "heuristic_correct": true,
+        "if_anomaly_score": 0.0635,
+        "if_prediction": "normal",
+        "if_correct": false,
+        "why_if_misses": "Near-zero CPU (0.0%) with low variability is statistically NORMAL -- 17 of 50 simulated cluster containers (legitimately idle + cold standby) share this profile. IF cannot isolate this container quickly -> low anomaly score -> MISSED."
+      },
+      {
+        "container": "normal-web",
+        "expected": "normal",
+        "heuristic_score": 0.0,
+        "heuristic_classification": "normal",
+        "heuristic_correct": true,
+        "if_anomaly_score": 1.0,
+        "if_prediction": "normal",
+        "if_correct": true,
+        "why_if_misses": "Normal container: correctly classified."
+      },
+      {
+        "container": "normal-batch",
+        "expected": "normal",
+        "heuristic_score": 26.85,
+        "heuristic_classification": "normal",
+        "heuristic_correct": true,
+        "if_anomaly_score": 0.5879,
+        "if_prediction": "normal",
+        "if_correct": true,
+        "why_if_misses": "Normal container: correctly classified."
+      },
+      {
+        "container": "zombie-stuck-process",
+        "expected": "zombie",
+        "heuristic_score": 59.64,
+        "heuristic_classification": "potential_zombie",
+        "heuristic_correct": true,
+        "if_anomaly_score": 0.0,
+        "if_prediction": "normal",
+        "if_correct": false,
+        "why_if_misses": "Near-zero CPU (1.7%) with low variability is statistically NORMAL -- 17 of 50 simulated cluster containers (legitimately idle + cold standby) share this profile. IF cannot isolate this container quickly -> low anomaly score -> MISSED."
+      },
+      {
+        "container": "zombie-memory-leak",
+        "expected": "zombie",
+        "heuristic_score": 89.99,
+        "heuristic_classification": "zombie",
+        "heuristic_correct": true,
+        "if_anomaly_score": 0.2297,
+        "if_prediction": "normal",
+        "if_correct": false,
+        "why_if_misses": "Near-zero CPU (0.0%) with low variability is statistically NORMAL -- 17 of 50 simulated cluster containers (legitimately idle + cold standby) share this profile. IF cannot isolate this container quickly -> low anomaly score -> MISSED."
+      }
+    ],
+    "metrics": {
+      "heuristic": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "true_positives": 5,
+        "true_negatives": 2,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "isolation_forest": {
+        "accuracy": 0.2857,
+        "precision": 0,
+        "recall": 0.0,
+        "f1_score": 0,
+        "true_positives": 0,
+        "true_negatives": 2,
+        "false_positives": 0,
+        "false_negatives": 5
+      }
+    },
+    "training_set_size": 50,
+    "gap_demonstration": {
+      "paper_reference": "Anemogiannis et al. (2025) -- IF achieves F1=0.886 for general anomaly detection",
+      "paper_task": "General performance anomaly detection (CPU spikes, memory pressure)",
+      "our_task": "Zombie container detection (sustained near-zero CPU, resource waste)",
+      "if_recall_on_zombies": "0%",
+      "heuristic_recall_on_zombies": "100%",
+      "f1_improvement": "+100%",
+      "zombies_missed_by_if": [
+        "zombie-network-timeout",
+        "zombie-low-cpu",
+        "zombie-resource-imbalance",
+        "zombie-stuck-process",
+        "zombie-memory-leak"
+      ],
+      "gap_1_inversion": "IF detects UPWARD deviations from normal. Zombie containers exhibit DOWNWARD patterns (near-zero CPU) that are statistically NORMAL in a cluster with legitimately idle workloads. IF missed 5/5 zombies.",
+      "gap_3_interpretability": "IF provides no explanation for its decisions. Our heuristic provides per-rule scores with exact threshold values, enabling engineers to audit every detection (e.g., 'CPU=0.1% for 47min, memory stable at 134MB').",
+      "gap_5_no_baseline": "Anemogiannis et al. (2025) never compare against rule-based methods. This evaluation answers their open question: for zombie-specific detection, heuristics outperform IF by 100% F1."
+    }
+  },
+  "energy_impact": {
+    "test_cluster": {
+      "zombie_count": 5,
+      "items": [
+        {
+          "container": "zombie-low-cpu",
+          "description": "Orphaned sidecar holding memory after parent service deleted",
+          "real_world_example": "Monitoring agent whose target pod was evicted; never cleaned up",
+          "allocated_cpu_cores": 0.1,
+          "allocated_memory_gb": 0.125,
+          "cpu_power_w": 0.37,
+          "mem_power_w": 0.047,
+          "total_power_w": 0.5,
+          "monthly_energy_kwh": 0.3602,
+          "monthly_co2_kg": 0.0839,
+          "monthly_cost_usd": 1.5,
+          "annual_cost_usd": 17.97
+        },
+        {
+          "container": "zombie-memory-leak",
+          "description": "Abandoned service with unclosed connection accumulating buffers",
+          "real_world_example": "Microservice left running after feature flag disabled; leaks 2MB/min",
+          "allocated_cpu_cores": 0.05,
+          "allocated_memory_gb": 0.125,
+          "cpu_power_w": 0.185,
+          "mem_power_w": 0.047,
+          "total_power_w": 0.278,
+          "monthly_energy_kwh": 0.2003,
+          "monthly_co2_kg": 0.0467,
+          "monthly_cost_usd": 0.94,
+          "annual_cost_usd": 11.23
+        },
+        {
+          "container": "zombie-stuck-process",
+          "description": "Service stuck in retry loop against decommissioned dependency",
+          "real_world_example": "Payment gateway client retrying removed legacy API endpoint",
+          "allocated_cpu_cores": 0.05,
+          "allocated_memory_gb": 0.063,
+          "cpu_power_w": 0.185,
+          "mem_power_w": 0.024,
+          "total_power_w": 0.25,
+          "monthly_energy_kwh": 0.1803,
+          "monthly_co2_kg": 0.042,
+          "monthly_cost_usd": 0.75,
+          "annual_cost_usd": 8.99
+        },
+        {
+          "container": "zombie-network-timeout",
+          "description": "Client retrying connections to a decommissioned upstream service",
+          "real_world_example": "gRPC client reconnecting to removed internal service every 3 minutes",
+          "allocated_cpu_cores": 0.05,
+          "allocated_memory_gb": 0.063,
+          "cpu_power_w": 0.185,
+          "mem_power_w": 0.024,
+          "total_power_w": 0.25,
+          "monthly_energy_kwh": 0.1803,
+          "monthly_co2_kg": 0.042,
+          "monthly_cost_usd": 0.75,
+          "annual_cost_usd": 8.99
+        },
+        {
+          "container": "zombie-resource-imbalance",
+          "description": "Over-provisioned container from load test never scaled down",
+          "real_world_example": "Stress-test pod allocated 512Mi/1vCPU; developers forgot to tear down",
+          "allocated_cpu_cores": 0.5,
+          "allocated_memory_gb": 0.5,
+          "cpu_power_w": 1.85,
+          "mem_power_w": 0.188,
+          "total_power_w": 2.445,
+          "monthly_energy_kwh": 1.7604,
+          "monthly_co2_kg": 0.4102,
+          "monthly_cost_usd": 7.49,
+          "annual_cost_usd": 89.86
+        }
+      ],
+      "total_power_waste_w": 3.72,
+      "total_monthly_energy_kwh": 2.681,
+      "total_monthly_co2_kg": 0.6248,
+      "total_monthly_cost_usd": 11.43,
+      "total_annual_cost_usd": 137.16
+    },
+    "real_world_100_pod_cluster": {
+      "expected_zombie_count": 30,
+      "basis": "Jindal et al. (2023): 30% zombie-like containers in 1,000 Kubernetes clusters",
+      "projected_monthly_cost_usd": 68.58,
+      "projected_annual_cost_usd": 822.96,
+      "projected_monthly_co2_kg": 3.75,
+      "projected_monthly_energy_kwh": 16.09
+    },
+    "li_et_al_connection": {
+      "paper_finding": "EAES achieves 15.34% energy reduction",
+      "paper_gap": "EAES is a scaling algorithm -- it does not classify individual containers as zombie vs. legitimately idle (Gap 1: Li et al. critical review). It would scale DOWN both zombie AND legitimately idle containers, risking disruption to cold-standby and scheduled batch workloads.",
+      "our_contribution": "Heuristic detector provides the MISSING classification layer: identifies zombie containers before scaling action. Enables EAES to act on confirmed zombies only -- avoiding false termination of legitimate standby/batch containers.",
+      "integration_path": "Future work: pipe heuristic classifications into EAES feedback loop. Zombie containers -> immediate scale-to-zero. Legitimately idle -> normal EAES management."
+    }
+  }
+}

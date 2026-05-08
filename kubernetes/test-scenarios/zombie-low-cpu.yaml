@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zombie-low-cpu
+  namespace: test-scenarios
+  labels:
+    app: zombie-low-cpu
+    scenario: zombie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zombie-low-cpu
+  template:
+    metadata:
+      labels:
+        app: zombie-low-cpu
+        scenario: zombie
+    spec:
+      containers:
+        - name: zombie-low-cpu
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Zombie pattern: allocate memory then do nothing
+              # Simulates an orphaned container holding resources idle
+              dd if=/dev/zero of=/tmp/memblock bs=1M count=50 2>/dev/null
+              while true; do
+                sleep 120
+              done
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi

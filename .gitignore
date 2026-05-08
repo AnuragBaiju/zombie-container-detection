@@ -1,0 +1,23 @@
+# AWS credentials — NEVER commit
+rootkey.csv
+rootkey*.csv
+.aws/
+credentials
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Generated/local
+*.log

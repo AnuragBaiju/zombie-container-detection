@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zombie-dashboard
+  namespace: monitoring
+  labels:
+    app: zombie-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zombie-dashboard
+  template:
+    metadata:
+      labels:
+        app: zombie-dashboard
+    spec:
+      containers:
+        - name: zombie-dashboard
+          image: 810244486416.dkr.ecr.us-east-1.amazonaws.com/zombie-dashboard:latest
+          ports:
+            - containerPort: 8501
+          env:
+            - name: PROMETHEUS_URL
+              value: "http://prometheus-server.monitoring.svc.cluster.local:9090"
+            - name: REFRESH_SECONDS
+              value: "30"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zombie-dashboard
+  namespace: monitoring
+  labels:
+    app: zombie-dashboard
+spec:
+  type: LoadBalancer
+  selector:
+    app: zombie-dashboard
+  ports:
+    - port: 80
+      targetPort: 8501
+      protocol: TCP

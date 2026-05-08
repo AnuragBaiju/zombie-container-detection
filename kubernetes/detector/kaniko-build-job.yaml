@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: build
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kaniko-builder
+  namespace: build
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kaniko-builder
+  namespace: build
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kaniko-builder
+  namespace: build
+subjects:
+  - kind: ServiceAccount
+    name: kaniko-builder
+    namespace: build
+roleRef:
+  kind: Role
+  name: kaniko-builder
+  apiGroup: rbac.authorization.k8s.io
+---
+# One-shot job that builds the detector image inside the cluster using kaniko
+# and pushes to ECR. No local Docker required.
+#
+# Before applying:
+#   - The kaniko-builder ServiceAccount must be annotated with an IAM role
+#     ARN that has ECR push + S3 read permission (IRSA). Run:
+#         eksctl create iamserviceaccount --cluster zombie-detector-cluster \
+#           --namespace build --name kaniko-builder \
+#           --attach-policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser \
+#           --attach-policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess \
+#           --override-existing-serviceaccounts --approve
+#   - The source bundle must be uploaded to s3://${SOURCE_BUCKET}/zombie-source.tar.gz
+#   - ${ECR_REGISTRY} substituted via envsubst at apply time
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: build-zombie-detector
+  namespace: build
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 600
+  template:
+    spec:
+      serviceAccountName: kaniko-builder
+      restartPolicy: Never
+      containers:
+        - name: kaniko
+          image: gcr.io/kaniko-project/executor:latest
+          args:
+            - "--context=s3://${SOURCE_BUCKET}/zombie-source.tar.gz"
+            - "--dockerfile=Dockerfile"
+            - "--destination=${ECR_REGISTRY}/zombie-detector:latest"
+            - "--cache=false"
+            - "--verbosity=info"
+          env:
+            - name: AWS_REGION
+              value: us-east-1
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi

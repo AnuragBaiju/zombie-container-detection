@@ -1,0 +1,13 @@
+container,expected,predicted,score,correct,adversarial,trigger_rule
+zombie-memory-leak,zombie,zombie,90.0,True,False,rule2_memory_leak
+adversarial-cold-standby,normal,zombie,89.4,False,True,rule4_network_timeout
+adversarial-stealth-zombie,zombie,zombie,82.6,True,True,rule3_stuck_process
+adversarial-low-traffic-api,normal,zombie,79.7,False,True,rule4_network_timeout
+zombie-network-timeout,zombie,zombie,79.6,True,False,rule4_network_timeout
+zombie-resource-imbalance,zombie,zombie,75.0,True,False,rule5_resource_imbalance
+zombie-stuck-process,zombie,zombie,65.9,True,False,rule3_stuck_process
+adversarial-jvm-warmup,normal,zombie,65.0,False,True,rule1_low_cpu
+zombie-low-cpu,zombie,zombie,65.0,True,False,rule1_low_cpu
+normal-batch,normal,normal,26.8,True,False,
+normal-web,normal,normal,0.0,True,False,
+adversarial-cron-hourly,normal,normal,0.0,True,True,

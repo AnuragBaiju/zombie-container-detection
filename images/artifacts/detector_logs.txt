@@ -1,0 +1,199 @@
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 0.0008
+      low_cpu_fraction: 1.0
+      low_cpu_minutes: 60.0
+      mem_trend_pct: 86.97
+      avg_network_bytes_sec: 0.02
+      network_negligible: True
+      duration_score: 1.0
+      cpu_score: 0.9998
+    Details for rule2_memory_leak:
+      avg_cpu_pct: 0.0008
+      mem_start_mb: 65.7
+      mem_end_mb: 122.83
+      mem_increase_pct: 86.97
+      monotonic_score: 1.0
+      magnitude_score: 1.0
+
+[ZOMBIE] test-scenarios/adversarial-low-traffic-api-5f7c887d7-89s8l/adversarial-low-traffic-api â€” Score: 79.7/100
+    rule1_low_cpu: 0.9999 (triggered)
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.0000
+    rule4_network_timeout: 0.9782 (triggered)
+    rule5_resource_imbalance: 0.0000
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 0.0008
+      low_cpu_fraction: 1.0
+      low_cpu_minutes: 60.0
+      mem_trend_pct: 0.1
+      avg_network_bytes_sec: 14.33
+      network_negligible: True
+      duration_score: 1.0
+      cpu_score: 0.9998
+    Details for rule4_network_timeout:
+      avg_cpu_pct: 0.0008
+      avg_network_bytes_sec: 14.33
+      active_fraction: 0.9046
+      cpu_score: 0.9992
+      persistence_score: 1.0
+      volume_score: 0.9284
+
+[ZOMBIE] test-scenarios/zombie-network-timeout-54885dc468-lwkvg/zombie-network-timeout â€” Score: 79.6/100
+    rule1_low_cpu: 0.9999 (triggered)
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.0000
+    rule4_network_timeout: 0.9725 (triggered)
+    rule5_resource_imbalance: 0.0000
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 0.0011
+      low_cpu_fraction: 1.0
+      low_cpu_minutes: 60.0
+      mem_trend_pct: 0.0
+      avg_network_bytes_sec: 18.03
+      network_negligible: True
+      duration_score: 1.0
+      cpu_score: 0.9998
+    Details for rule4_network_timeout:
+      avg_cpu_pct: 0.0011
+      avg_network_bytes_sec: 18.03
+      active_fraction: 1.0
+      cpu_score: 0.9989
+      persistence_score: 1.0
+      volume_score: 0.9098
+
+[ZOMBIE] test-scenarios/zombie-resource-imbalance-845b5b55d5-6sxhn/zombie-resource-imbalance â€” Score: 75.0/100
+    rule1_low_cpu: 1.0000 (triggered)
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.0000
+    rule4_network_timeout: 0.0000
+    rule5_resource_imbalance: 0.9982 (triggered)
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 0.0
+      low_cpu_fraction: 1.0
+      low_cpu_minutes: 60.0
+      mem_trend_pct: 0.0
+      avg_network_bytes_sec: 0.02
+      network_negligible: True
+      duration_score: 1.0
+      cpu_score: 1.0
+    Details for rule5_resource_imbalance:
+      avg_cpu_pct: 0.0
+      mem_limit_mb: 1024.0
+      avg_mem_usage_mb: 0.32
+      usage_ratio: 0.0003
+      imbalance_score: 0.997
+
+[ZOMBIE] test-scenarios/adversarial-cold-standby-64f7c45c7b-fj7h9/adversarial-cold-standby â€” Score: 67.5/100
+    rule1_low_cpu: 0.8594 (triggered)
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.0000
+    rule4_network_timeout: 0.7793 (triggered)
+    rule5_resource_imbalance: 0.0000
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 0.0077
+      low_cpu_fraction: 1.0
+      low_cpu_minutes: 60.0
+      mem_trend_pct: 0.06
+      avg_network_bytes_sec: 145.11
+      network_negligible: False
+      duration_score: 1.0
+      cpu_score: 0.9985
+    Details for rule4_network_timeout:
+      avg_cpu_pct: 0.0077
+      avg_network_bytes_sec: 145.11
+      active_fraction: 1.0
+      cpu_score: 0.9923
+      persistence_score: 1.0
+      volume_score: 0.2744
+
+[ZOMBIE] test-scenarios/zombie-stuck-process-7bc7d764c7-kndks/zombie-stuck-process â€” Score: 66.0/100
+    rule1_low_cpu: 0.7807 (triggered)
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.8600 (triggered)
+    rule4_network_timeout: 0.0000
+    rule5_resource_imbalance: 0.0000
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 1.4963
+      low_cpu_fraction: 0.751
+      low_cpu_minutes: 45.1
+      mem_trend_pct: 5.49
+      avg_network_bytes_sec: 0.02
+      network_negligible: True
+      duration_score: 0.751
+      cpu_score: 0.7007
+    Details for rule3_stuck_process:
+      spike_idle_transitions: 4
+      total_spikes: 5
+      median_cpu_pct: 0.0
+      repetition_score: 0.8
+
+[ZOMBIE] test-scenarios/zombie-low-cpu-59d9f48bb9-z66jz/zombie-low-cpu â€” Score: 65.0/100
+    rule1_low_cpu: 1.0000 (triggered)
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.0000
+    rule4_network_timeout: 0.0000
+    rule5_resource_imbalance: 0.0000
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 0.0
+      low_cpu_fraction: 1.0
+      low_cpu_minutes: 60.0
+      mem_trend_pct: 0.0
+      avg_network_bytes_sec: 0.02
+      network_negligible: True
+      duration_score: 1.0
+      cpu_score: 1.0
+
+[ZOMBIE] test-scenarios/adversarial-cron-hourly-ff489db5-9vlfw/adversarial-cron-hourly â€” Score: 65.0/100
+    rule1_low_cpu: 1.0000 (triggered)
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.0000
+    rule4_network_timeout: 0.0000
+    rule5_resource_imbalance: 0.0000
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 0.0
+      low_cpu_fraction: 1.0
+      low_cpu_minutes: 60.0
+      mem_trend_pct: 0.0
+      avg_network_bytes_sec: 0.02
+      network_negligible: True
+      duration_score: 1.0
+      cpu_score: 1.0
+
+[ZOMBIE] test-scenarios/adversarial-stealth-zombie-698d9987dc-cshn8/adversarial-stealth-zombie â€” Score: 64.3/100
+    rule1_low_cpu: 0.9890 (triggered)
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.0000
+    rule4_network_timeout: 0.0000
+    rule5_resource_imbalance: 0.0000
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 0.1375
+      low_cpu_fraction: 1.0
+      low_cpu_minutes: 60.0
+      mem_trend_pct: -3.61
+      avg_network_bytes_sec: 0.02
+      network_negligible: True
+      duration_score: 1.0
+      cpu_score: 0.9725
+
+[NORMAL] test-scenarios/normal-batch-c485cf794-x2gdm/normal-batch â€” Score: 27.0/100
+    rule1_low_cpu: 0.4150 (triggered)
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.0000
+    rule4_network_timeout: 0.0000
+    rule5_resource_imbalance: 0.0000
+    Details for rule1_low_cpu:
+      avg_cpu_pct: 4.9269
+      low_cpu_fraction: 0.5228
+      low_cpu_minutes: 31.4
+      mem_trend_pct: -7.65
+      avg_network_bytes_sec: 0.02
+      network_negligible: True
+      duration_score: 0.5228
+      cpu_score: 0.0146
+
+[NORMAL] test-scenarios/normal-web-68ffc7f899-jw4sb/normal-web â€” Score: 0.0/100
+    rule1_low_cpu: 0.0000
+    rule2_memory_leak: 0.0000
+    rule3_stuck_process: 0.0000
+    rule4_network_timeout: 0.0000
+    rule5_resource_imbalance: 0.0000
