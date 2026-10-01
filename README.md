@@ -2,7 +2,7 @@
 
 A lightweight, transparent, rule-based system for detecting zombie containers in Kubernetes clusters. Built around five weighted PromQL-driven rules; designed to *complement*, not replace, ML anomaly detection.
 
-**Author:** Anurag Baiju (23409223) — MSc Cloud Computing, National College of Ireland
+**Author:** Anurag Baiju — MSc Cloud Computing, National College of Ireland
 
 ## Live demo dashboard (public)
 
@@ -31,7 +31,7 @@ The previous version of this README claimed **100% accuracy on a 7-container han
 
 ### Honest accuracy summary (measured on the live cluster)
 
-The numbers below are from the running EKS cluster (`zombie-detector-cluster`, us-east-1, account 670694287735) at 172 minutes of detector uptime, scraped via Prometheus at 15-second intervals over a 60-minute lookback window. **These are observed values, not predictions.**
+The numbers below are from the running EKS cluster (`zombie-detector-cluster`, us-east-1) at 172 minutes of detector uptime, scraped via Prometheus at 15-second intervals over a 60-minute lookback window. **These are observed values, not predictions.**
 
 | Metric | Canonical 7 (hand-crafted) | Adversarial 5 (failure-mode probes) | **Combined 12 (reported)** |
 |---|---:|---:|---:|
